@@ -6,48 +6,48 @@
   # Use https://search.nixos.org/packages to find packages
   packages = [ pkgs.python3 ];
 
+  env = {
+    VENV_DIR = ".venv";
+  };
+
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [ "ms-python.python" ];
     workspace = {
       # Runs when a workspace is first created with this `dev.nix` file
       onCreate = {
+        # create a python virtual environment
         create-venv = ''
-          python -m venv .venv
-          source .venv/bin/activate
+          python -m venv $VENV_DIR
+          source $VENV_DIR/bin/activate
           pip install -r requirements.txt
         '';
+
         # Open editors for the following files by default, if they exist:
-        default.openFiles = [ "main.py" ];
+        default.openFiles = [ "main.py" "README.md" ];
       };
       onStart = {
         # check the existence of the venv and create if non existent
         check-venv-existence = ''
-          VENV_DIR=".venv"
-          if [ ! -d "$VENV_DIR" ]; then
+          if [ ! -d $VENV_DIR ]; then
             echo "Virtual environment not found. Creating one..."
-            python -m venv "$VENV_DIR" && source "$VENV_DIR"/bin/activate && pip install -r requirements.txt
+            python -m venv $VENV_DIR && source $VENV_DIR/bin/activate && pip install -r requirements.txt
             echo "Virtual environment created in $VENV_DIR."
-          else
-              echo "Virtual environment already exists in $VENV_DIR."
-              source "$VENV_DIR"/bin/activate
           fi
         '';
       };
-
     };
-    # Enable previews and customize configuration
+    # Enable web preview
     previews = {
       enable = true;
       previews = {
         web = {
           command = [ "./preview.sh" ];
-          env = {
-            PORT = "$PORT";
-          };
+          # cwd = "subfolder"
+          env = { PORT = "$PORT"; };
           manager = "web";
         };
       };
     };
   };
-}
+} 
