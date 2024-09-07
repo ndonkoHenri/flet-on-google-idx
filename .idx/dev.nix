@@ -30,7 +30,7 @@
         '';
 
         # Open editors for the following files by default, if they exist:
-        default.openFiles = [ "main.py" "README.md" ];
+        default.openFiles = [ "main.py" "README.md" "requirements.txt"];
       };
 
       onStart = {
