@@ -1,12 +1,18 @@
+# To learn more about how to use Nix to configure your environment
+# see: https://developers.google.com/idx/guides/customize-idx-env
 { pkgs, ... }: {
-  # Which nixpkgs channel to use.
-  channel = "stable-23.11"; # or "unstable"
+  # nixpkgs channel
+  channel = "stable-23.11";
 
-  packages = [ pkgs.python3 ];
+  packages = [
+    pkgs.python3
+    pkgs.jdk20
+  ];
 
   # environment variables
   env = {
     VENV_DIR = ".venv";
+    MAIN_FILE = "main.py";
   };
 
   idx = {
@@ -19,18 +25,19 @@
         # create a python virtual environment
         create-venv = ''
           python -m venv $VENV_DIR
-          source $VENV_DIR/bin/activate
-          
+
           if [ ! -f requirements.txt ]; then
             echo "requirements.txt not found. Creating one with flet..."
             echo "flet" > requirements.txt
           fi
 
+          # activate virtual env and install requirements
+          source $VENV_DIR/bin/activate
           pip install -r requirements.txt
         '';
 
         # Open editors for the following files by default, if they exist:
-        default.openFiles = [ "main.py" "README.md" "requirements.txt"];
+        default.openFiles = [ "README.md" "requirements.txt" "$MAIN_FILE" ];
       };
 
       onStart = {
@@ -45,11 +52,14 @@
             echo "requirements.txt not found. Creating one with flet..."
             echo "flet" > requirements.txt
           fi
-          
+
           # activate virtual env and install requirements
           source $VENV_DIR/bin/activate
           pip install -r requirements.txt
         '';
+
+        # Open editors for the following files by default, if they exist:
+        default.openFiles = [ "README.md" "requirements.txt" "$MAIN_FILE" ];
       };
     };
 
@@ -67,7 +77,7 @@
             source $VENV_DIR/bin/activate
             
             # run app in hot reload mode on a port provided by IDX
-            flet run main.py --web --port $PORT
+            flet run $MAIN_FILE --web --port $PORT
             ''
           ];
           env = { PORT = "$PORT"; };
