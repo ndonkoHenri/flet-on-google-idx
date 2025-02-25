@@ -5,6 +5,7 @@
     pkgs.python3
     pkgs.python3Packages.virtualenv
     pkgs.python3Packages.pip
+    pkgs.uv
   ];
 
   env = {
@@ -22,9 +23,10 @@
     workspace = {
       onCreate = {
         create-venv = ''
-          python -m venv $VENV_DIR
+          uv venv $VENV_DIR
+
           source $VENV_DIR/bin/activate
-          pip install "flet[all]" --upgrade --quiet
+          uv add "flet[all]" --upgrade --quiet
         '';
 
         default.openFiles = [ "README.md" "pyproject.toml" "$MAIN_FILE" ];
@@ -33,7 +35,7 @@
       onStart = {
         check-venv-existence = ''
           source $VENV_DIR/bin/activate
-          pip install "flet[all]" --upgrade --quiet
+          uv add "flet[all]" --upgrade --quiet
         '';
         
         default.openFiles = [ "README.md" "pyproject.toml" "$MAIN_FILE" ];
