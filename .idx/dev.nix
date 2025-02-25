@@ -5,6 +5,7 @@
     pkgs.python3
     pkgs.python3Packages.virtualenv
     pkgs.python3Packages.pip
+    pkgs.zrok
   ];
 
   env = {
